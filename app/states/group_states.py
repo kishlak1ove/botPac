@@ -7,6 +7,7 @@ class RegUser(StatesGroup):
 
 class OrderPackage(StatesGroup):
     category = State()
+    city = State()
     package = State()
     description = State()
 

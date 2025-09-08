@@ -10,8 +10,8 @@ points_start = InlineKeyboardMarkup(
 
 package_categories = InlineKeyboardMarkup(
     inline_keyboard = [[InlineKeyboardButton(text = "Свадебная съёмка", callback_data = "wedding")], 
-                       [InlineKeyboardButton(text = "Уличная съёмка" , callback_data = "street")],
-                       [InlineKeyboardButton(text = "Парная/Индивидуальная съёмка" , callback_data = "paired")],
+                       [InlineKeyboardButton(text = "Парная съёмка" , callback_data = "paired")],
+                       [InlineKeyboardButton(text = "Индивидуальная съёмка" , callback_data = "individ")],
                        [InlineKeyboardButton(text = "Школьная съёмка" , callback_data = "school")],
                        [InlineKeyboardButton(text = "День рождения" , callback_data = "birthday")],
                        [InlineKeyboardButton(text = "Утренник в детском саду" , callback_data = "matinee")],
@@ -22,12 +22,13 @@ packages_wedding = InlineKeyboardMarkup(
     inline_keyboard = [[InlineKeyboardButton(text = "LITE", callback_data = "wedding_lite")],
                        [InlineKeyboardButton(text = "LITE PLUS", callback_data = "wedding_lite_plus")],
                        [InlineKeyboardButton(text = "PREMIUM", callback_data = "wedding_premium")],
+                       [InlineKeyboardButton(text = "PREMIUM +", callback_data = "wedding_premium_+")],
+                       [InlineKeyboardButton(text = "LITE PHOTO + VIDEO", callback_data = "wedding_lite_photo_+_video")],
+                       [InlineKeyboardButton(text = "PREMIUM PHOTO + VIDEO", callback_data = "wedding_premium_photo_+_video")],
                        [InlineKeyboardButton(text = "ULTRA", callback_data = "wedding_ultra")],
-                       [InlineKeyboardButton(text = "LITE PHOTO", callback_data = "wedding_lite_photo")],
-                       [InlineKeyboardButton(text = "PREMIUM PHOTO", callback_data = "wedding_premium_photo")],
                        [InlineKeyboardButton(text="⏪ Назад к категориям", callback_data="back_to_categories")]])
 
-packages_street = InlineKeyboardMarkup(
+packages_individ = InlineKeyboardMarkup(
     inline_keyboard = [[InlineKeyboardButton(text = "PHOTO", callback_data = "street_photo")],
                        [InlineKeyboardButton(text = "PLUS", callback_data = "street_plus")],
                        [InlineKeyboardButton(text = "VIDEO", callback_data = "street_video")],
@@ -68,4 +69,14 @@ back_to_categories_kb = InlineKeyboardMarkup(
 
 back_to_packages_kb = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text="⏪ Назад к пакетам", callback_data="back_to_packages")]]
+)
+
+cities_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Белгород", callback_data="city_belgorod")],
+        [InlineKeyboardButton(text="Воронеж", callback_data="city_voronezh")],
+        [InlineKeyboardButton(text="Санкт-Петербург", callback_data="city_piter")],
+        [InlineKeyboardButton(text="Москва", callback_data="city_moscow")],
+        [InlineKeyboardButton(text="⏪ Назад к категориям", callback_data="back_to_categories")]
+    ]
 )

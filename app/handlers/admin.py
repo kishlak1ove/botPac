@@ -1,6 +1,6 @@
 import os 
 from aiogram import Router, F
-from database.models import Broadcast, User, OrderDescription
+from database.models import Broadcast, User, OrderDescription, PackagePrice
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
@@ -69,20 +69,40 @@ async def check_orders(callback: CallbackQuery, state: FSMContext):
 
 async def show_order(callback: CallbackQuery, order_description: OrderDescription, state: FSMContext):
     async with async_session() as session:
+        
         result = await session.execute(
             select(User).where(User.id == order_description.user)
         )
         user = result.scalar_one_or_none()
 
+        
+        stmt_price = select(PackagePrice).where(
+            PackagePrice.package_name == order_description.package_code,   
+            PackagePrice.city == order_description.city,
+        )
+        package_price = await session.scalar(stmt_price)
+        final_price = package_price.price if package_price else "❌ не найдена"
+
+    
     moscow_tz = pytz.timezone("Europe/Moscow")
     created_at = order_description.created_at.replace(tzinfo=pytz.UTC).astimezone(moscow_tz)
     created_at_str = created_at.strftime("%d.%m.%Y %H:%M")
 
+    city_map = {
+        "belgorod": "Белгород",
+        "voronezh": "Воронеж",
+        "piter": "Санкт-Петербург",
+        "moscow": "Москва"
+    }
+    city_name = city_map.get(order_description.city, order_description.city or "Не указан")
+
     text = (
         f"📢 <b>Заказ ({created_at_str})</b>\n"
         f"👤 Пользователь: {user.name} (@{user.username}) | {user.phone}\n"
+        f"🏙 Город: {city_name}\n"
         f"📂 Категория: {order_description.category}\n"
         f"📦 Пакет: {order_description.package}\n"
+        f"💰 Цена: {final_price} ₽\n"
         f"📝 Описание: {order_description.description}"
     )
 
@@ -90,6 +110,7 @@ async def show_order(callback: CallbackQuery, order_description: OrderDescriptio
     index = data.get("current_index", 0)
     await callback.message.edit_text(text, parse_mode="HTML", reply_markup=order_nav_buttons(index))
     await callback.answer()
+
 
 @admin_router.callback_query(F.data.startswith("order_next_"))
 async def next_order(callback: CallbackQuery, state: FSMContext):
