@@ -158,7 +158,7 @@ async def back_to_start(callback_query: CallbackQuery):
     )
     await callback_query.answer()
 
-@start_router.callback_query(F.data.in_(["wedding", "street", "individ", "paired", "school", "birthday", "matinee"]))
+@start_router.callback_query(F.data.in_(["wedding", "street", "individual", "paired", "school", "birthday", "matinee"]))
 async def choose_category(callback_query: CallbackQuery, state: FSMContext):
     category = callback_query.data
     
@@ -211,7 +211,7 @@ async def choose_city(callback_query: CallbackQuery, state: FSMContext):
     category_keyboards = {
         "wedding": kb_inline.packages_wedding,
         "paired": kb_inline.packages_paired,
-        "individ": kb_inline.packages_individ,
+        "individual": kb_inline.packages_individual,
         "school": kb_inline.packages_school,
         "birthday": kb_inline.packages_birthday,
         "matinee": kb_inline.packages_matinee
@@ -227,7 +227,7 @@ async def choose_city(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
 
     
-@start_router.callback_query(F.data.regexp(r"^(wedding|paired|individ|school|birthday|matinee)_.+"))
+@start_router.callback_query(F.data.regexp(r"^(wedding|paired|individual|school|birthday|matinee)_.+"))
 async def choose_package(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.answer()
 
@@ -236,7 +236,7 @@ async def choose_package(callback_query: CallbackQuery, state: FSMContext):
 
     category_names = {
         "wedding": "Свадебная съёмка",
-        "individ": "Индивидуальная съёмка",
+        "individual": "Индивидуальная съёмка",
         "paired": "Парная съёмка",
         "school": "Школьная съёмка",
         "birthday": "День рождения",
