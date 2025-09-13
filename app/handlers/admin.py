@@ -102,7 +102,7 @@ async def show_order(callback: CallbackQuery, order_description: OrderDescriptio
         f"🏙 Город: {city_name}\n"
         f"📂 Категория: {order_description.category}\n"
         f"📦 Пакет: {order_description.package}\n"
-        f"💰 Цена: {final_price} ₽\n"
+        f"💰 Цена: {final_price}\n"
         f"📝 Описание: {order_description.description}"
     )
 

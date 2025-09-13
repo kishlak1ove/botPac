@@ -21,6 +21,19 @@ async def cmd_start(message: Message):
         parse_mode = "HTML"
     )
 
+def is_valid_phone(phone: str) -> bool:
+    pattern = r"^(\+7\d{10}|8\d{10})$"
+    return bool(re.match(pattern, phone))
+
+def is_valid_fullname(name: str) -> bool:
+    parts = name.strip().split()
+    if len(parts) < 2 or len(parts) > 3:
+        return False
+    for part in parts:
+        if not re.match(r"^[А-ЯЁ][а-яё]+$", part):
+            return False
+    return True
+
 
 @start_router.message(Command("help"))
 async def cmd_help(message: Message):
@@ -47,20 +60,25 @@ async def reg_user_start(message: Message, state: FSMContext):
 @start_router.message(RegUser.name)
 async def get_name(message: Message, state: FSMContext):
     name = message.text.strip()
+    if not is_valid_fullname(name):
+        await message.answer("❌ Неверный формат ФИО.\n\nПример: Иванов Иван Иванович")
+        return
     await state.update_data(name=name)
     await state.set_state(RegUser.phone)
-    await message.answer("Введите ваш номер телефона в формате +79528125252:")
+    await message.answer("Введите ваш номер телефона в формате +79528125252 или 89281234567:")
+
 
 @start_router.message(RegUser.phone)
 async def get_phone(message: Message, state: FSMContext):
     phone = message.text.strip()
-    if not phone.startswith("+") or not phone[1:].isdigit():
-        await message.answer("Неверный формат")
+    if not is_valid_phone(phone):
+        await message.answer("❌ Неверный формат телефона.\n\nПример: +79528125252 или 89528125252")
         return
 
     await state.update_data(phone=phone)
     await state.set_state(RegUser.username)
     await message.answer("Введите ваш Telegram username (без @). Пример: my_username")
+
 
 def is_valid_username(username: str) -> bool:
     return bool(re.match(r"^[a-zA-Z][a-zA-Z0-9_]{4,31}$", username))
@@ -170,7 +188,7 @@ async def choose_category(callback_query: CallbackQuery, state: FSMContext):
     )
     await callback_query.answer()
 
-@start_router.callback_query(F.data.in_(["city_belgorod", "city_voronezh", "city_piter", "city_moscow"]))
+@start_router.callback_query(F.data.in_(["city_belgorod", "city_voronezh", "city_piter", "city_moscow", "city_another"]))
 async def choose_city(callback_query: CallbackQuery, state: FSMContext):
     city_key = callback_query.data.replace("city_", "")
     
@@ -178,7 +196,8 @@ async def choose_city(callback_query: CallbackQuery, state: FSMContext):
         "belgorod": "Белгород",
         "voronezh": "Воронеж",
         "piter": "Санкт-Петербург", 
-        "moscow": "Москва"
+        "moscow": "Москва",
+        "another": "Другой город..."
     }
     
     city_name = city_map.get(city_key, city_key)
@@ -216,6 +235,16 @@ async def choose_city(callback_query: CallbackQuery, state: FSMContext):
         "birthday": kb_inline.packages_birthday,
         "matinee": kb_inline.packages_matinee
     }
+
+    if city_key == "another":
+        await callback_query.message.answer(
+            "📞 Для съёмки в других городах свяжитесь напрямую с видеографом:\n\n"
+            "👤 Пацуков Иван\n"
+            "📲 +7-910-321-43-70\n"
+            "Telegram: @thenewclassics1",
+            parse_mode="HTML"
+        )
+        await callback_query.answer()
 
     keyboard = category_keyboards.get(category)
     await callback_query.message.answer(
@@ -281,7 +310,8 @@ async def get_description(message: Message, state: FSMContext):
         "belgorod": "Белгород",
         "voronezh": "Воронеж",
         "piter": "Санкт-Петербург",
-        "moscow": "Москва"
+        "moscow": "Москва",
+        "another": "Другой город..."
     }
     city_name = city_map.get(city_key, city_key or "Не указан") 
 
@@ -321,7 +351,7 @@ async def get_description(message: Message, state: FSMContext):
                 f"🏙 Город: {city_name}\n"
                 f"📂 Категория: {category}\n"
                 f"📦 Пакет: {package}\n"
-                f"💰 Цена: {final_price} ₽\n"
+                f"💰 Цена: {final_price}\n"
                 f"📝 Описание: {description}",
                 reply_markup=kb_inline.back_to_start_kb
             )

@@ -38,11 +38,11 @@ class Broadcast(Base):
 
 class PackagePrice(Base):
     __tablename__ = "package_prices"
-
+ 
     id: Mapped[int] = mapped_column(primary_key=True)
     package_name: Mapped[str] = mapped_column(String(50), nullable=False)  
     city: Mapped[str] = mapped_column(String(50), nullable=False)          
-    price: Mapped[int] = mapped_column(nullable=False)                    
+    price: Mapped[str] = mapped_column(String(50), nullable=False)
 
 async def async_main():
     async with engine.begin() as conn:

@@ -72,6 +72,7 @@ cities_kb = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="Воронеж", callback_data="city_voronezh")],
         [InlineKeyboardButton(text="Санкт-Петербург", callback_data="city_piter")],
         [InlineKeyboardButton(text="Москва", callback_data="city_moscow")],
+        [InlineKeyboardButton(text="Другой город...", callback_data="city_another")],
         [InlineKeyboardButton(text="⏪ Назад к категориям", callback_data="back_to_categories")]
     ]
 )
